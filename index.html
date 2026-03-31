@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Creador de Landing Visual V5</title>
+  <title>Creador de Landing Visual V7</title>
   <style>
     :root {
       --bg: #eef3f8;
@@ -22,7 +22,6 @@
     }
 
     * { box-sizing: border-box; }
-
     html, body { height: 100%; }
 
     body {
@@ -373,7 +372,7 @@
     <section class="panel">
       <div class="title-wrap">
         <h1>Creador de landing visual</h1>
-        <p>Configuración independiente a la izquierda y resultado independiente a la derecha.</p>
+        <p>Versión preparada para exportar HTML con metadatos para compartir mejor en WhatsApp, Telegram, Facebook y X.</p>
       </div>
 
       <div class="field">
@@ -383,6 +382,16 @@
           <input id="bgColorPicker" class="color-picker" type="color" value="#eef3f8" />
           <input id="bgColorText" class="input" type="text" value="#eef3f8" placeholder="#eef3f8 o rgb(240,243,248)" />
         </div>
+      </div>
+
+      <div class="field">
+        <label for="pageUrl">URL final de la página</label>
+        <input id="pageUrl" class="input" type="text" placeholder="https://usuario.github.io/proyecto/" />
+      </div>
+
+      <div class="field">
+        <label for="faviconUrl">URL del favicon</label>
+        <input id="faviconUrl" class="input" type="text" placeholder="https://usuario.github.io/proyecto/favicon.png" />
       </div>
 
       <div class="field">
@@ -407,7 +416,7 @@
 
       <div class="field">
         <label for="media">Imágenes y videos</label>
-        <div class="hint">Un enlace por línea. Puedes mezclar imágenes, YouTube y Vimeo.</div>
+        <div class="hint">Un enlace por línea. Puedes mezclar imágenes, YouTube y Vimeo. Para el preview social se usará primero el logo y si no existe, la primera imagen válida.</div>
         <textarea id="media" placeholder="https://sitio.com/imagen-1.jpg
 https://youtube.com/watch?v=...
 https://sitio.com/imagen-2.png"></textarea>
@@ -448,7 +457,7 @@ https://sitio.com/imagen-2.png"></textarea>
       <div class="section-head">
         <div>
           <h2>Vista preliminar</h2>
-          <p>La izquierda y la derecha se desplazan por separado.</p>
+          <p>La exportación incluye title, description, Open Graph, Twitter Cards, canonical, og:url y favicon opcional.</p>
         </div>
       </div>
 
@@ -482,6 +491,8 @@ https://sitio.com/imagen-2.png"></textarea>
     const fields = {
       bgColorPicker: document.getElementById('bgColorPicker'),
       bgColorText: document.getElementById('bgColorText'),
+      pageUrl: document.getElementById('pageUrl'),
+      faviconUrl: document.getElementById('faviconUrl'),
       logoUrl: document.getElementById('logoUrl'),
       title: document.getElementById('title'),
       subtitle: document.getElementById('subtitle'),
@@ -539,6 +550,15 @@ https://sitio.com/imagen-2.png"></textarea>
       return /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/.test(value);
     }
 
+    function isLikelyUrl(value) {
+      try {
+        const u = new URL(value);
+        return u.protocol === 'http:' || u.protocol === 'https:';
+      } catch {
+        return false;
+      }
+    }
+
     function isImageUrl(url) {
       return /\.(jpg|jpeg|png|webp|gif|svg|avif)(\?.*)?$/i.test(url);
     }
@@ -557,7 +577,7 @@ https://sitio.com/imagen-2.png"></textarea>
           const idx = parts.findIndex(part => part === 'embed' || part === 'shorts');
           if (idx !== -1 && parts[idx + 1]) return 'https://www.youtube.com/embed/' + parts[idx + 1];
         }
-      } catch (error) {}
+      } catch {}
       return null;
     }
 
@@ -567,7 +587,7 @@ https://sitio.com/imagen-2.png"></textarea>
         if (!parsed.hostname.includes('vimeo.com')) return null;
         const id = parsed.pathname.split('/').filter(Boolean).find(part => /^\d+$/.test(part));
         return id ? 'https://player.vimeo.com/video/' + id : null;
-      } catch (error) {}
+      } catch {}
       return null;
     }
 
@@ -657,9 +677,19 @@ https://sitio.com/imagen-2.png"></textarea>
       return 'https://wa.me/' + cleanNumber + '?text=' + encodeURIComponent(text || 'Hola, quiero más información.');
     }
 
+    function getPreviewImage(data) {
+      return data.logoUrl || data.media.find(url => getMediaType(url) === 'image') || '';
+    }
+
+    function getMetaDescription(data) {
+      return data.subtitle || data.description || 'Landing visual generada en HTML';
+    }
+
     function getFormData() {
       return {
         bgColor: getSafeBgColor(),
+        pageUrl: fields.pageUrl.value.trim(),
+        faviconUrl: fields.faviconUrl.value.trim(),
         logoUrl: fields.logoUrl.value.trim(),
         title: fields.title.value.trim(),
         subtitle: fields.subtitle.value.trim(),
@@ -675,6 +705,8 @@ https://sitio.com/imagen-2.png"></textarea>
 
     function setFormData(data = {}) {
       updateColorInputs(data.bgColor || '#eef3f8');
+      fields.pageUrl.value = data.pageUrl || '';
+      fields.faviconUrl.value = data.faviconUrl || '';
       fields.logoUrl.value = data.logoUrl || '';
       fields.title.value = data.title || '';
       fields.subtitle.value = data.subtitle || '';
@@ -720,8 +752,16 @@ https://sitio.com/imagen-2.png"></textarea>
       preview.whatsapp.href = buildWhatsappLink(data.waNumber, data.waText);
       preview.whatsapp.style.display = data.waNumber ? 'grid' : 'none';
 
-      localStorage.setItem('landing-visual-v5-draft', JSON.stringify(data));
-      setStatus('Vista actualizada correctamente.');
+      const previewImage = getPreviewImage(data);
+      if (previewImage && !isLikelyUrl(previewImage)) {
+        setStatus('Vista actualizada. Ojo: la imagen de preview social debe ser una URL publica directa.');
+      } else if (data.pageUrl && !isLikelyUrl(data.pageUrl)) {
+        setStatus('Vista actualizada. Ojo: la URL final debe comenzar con http o https.');
+      } else {
+        setStatus('Vista actualizada correctamente.');
+      }
+
+      localStorage.setItem('landing-visual-v7-draft', JSON.stringify(data));
       return data;
     }
 
@@ -739,7 +779,7 @@ https://sitio.com/imagen-2.png"></textarea>
 
     function saveJson() {
       const data = renderPreview();
-      const safeName = (data.title || 'landing-visual-v5').toLowerCase().replace(/[^a-z0-9]+/gi, '-');
+      const safeName = (data.title || 'landing-visual-v7').toLowerCase().replace(/[^a-z0-9]+/gi, '-');
       downloadFile(safeName + '.json', JSON.stringify(data, null, 2), 'application/json');
       setStatus('Archivo JSON guardado correctamente.');
     }
@@ -770,12 +810,34 @@ https://sitio.com/imagen-2.png"></textarea>
         ? '<a class="wa-preview" href="' + escapeHtml(buildWhatsappLink(data.waNumber, data.waText)) + '" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">✆</a>'
         : '';
 
+      const previewImage = getPreviewImage(data);
+      const metaDescription = getMetaDescription(data);
+      const canonicalTag = data.pageUrl && isLikelyUrl(data.pageUrl)
+        ? '<link rel="canonical" href="' + escapeHtml(data.pageUrl) + '">' : '';
+      const ogUrlTag = data.pageUrl && isLikelyUrl(data.pageUrl)
+        ? '<meta property="og:url" content="' + escapeHtml(data.pageUrl) + '">' : '';
+      const faviconTag = data.faviconUrl && isLikelyUrl(data.faviconUrl)
+        ? '<link rel="icon" href="' + escapeHtml(data.faviconUrl) + '">' : '';
+
       return `<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${escapeHtml(data.title || 'Landing visual')}</title>
+  <meta name="description" content="${escapeHtml(metaDescription)}">
+  ${canonicalTag}
+  ${faviconTag}
+  <meta property="og:type" content="website">
+  ${ogUrlTag}
+  <meta property="og:title" content="${escapeHtml(data.title || 'Landing visual')}">
+  <meta property="og:description" content="${escapeHtml(metaDescription)}">
+  <meta property="og:image" content="${escapeHtml(previewImage)}">
+  <meta property="og:locale" content="es_ES">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${escapeHtml(data.title || 'Landing visual')}">
+  <meta name="twitter:description" content="${escapeHtml(metaDescription)}">
+  <meta name="twitter:image" content="${escapeHtml(previewImage)}">
   <style>
     :root { --bg:${escapeHtml(data.bgColor)}; --text:#314056; --muted:#6f7f95; --accent:#6d8cff; }
     * { box-sizing:border-box; }
@@ -820,7 +882,7 @@ https://sitio.com/imagen-2.png"></textarea>
 
     function saveHtml() {
       const data = renderPreview();
-      const safeName = (data.title || 'landing-visual-v5').toLowerCase().replace(/[^a-z0-9]+/gi, '-');
+      const safeName = (data.title || 'landing-visual-v7').toLowerCase().replace(/[^a-z0-9]+/gi, '-');
       downloadFile(safeName + '.html', buildStandaloneHtml(data), 'text/html;charset=utf-8');
       setStatus('Landing web HTML guardada correctamente.');
     }
@@ -871,11 +933,11 @@ https://sitio.com/imagen-2.png"></textarea>
       event.target.value = '';
     });
 
-    [fields.logoUrl, fields.title, fields.subtitle, fields.description, fields.media, fields.ctaText, fields.ctaLink, fields.waNumber, fields.waText].forEach(field => {
+    [fields.pageUrl, fields.faviconUrl, fields.logoUrl, fields.title, fields.subtitle, fields.description, fields.media, fields.ctaText, fields.ctaLink, fields.waNumber, fields.waText].forEach(field => {
       field.addEventListener('input', renderPreview);
     });
 
-    const savedDraft = localStorage.getItem('landing-visual-v5-draft');
+    const savedDraft = localStorage.getItem('landing-visual-v7-draft');
     if (savedDraft) {
       try {
         setFormData(JSON.parse(savedDraft));
