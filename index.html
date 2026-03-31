@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creador de Landing Visual V5</title>
+  <style>
+    :root {
+      --bg: #eef3f8;
+      --panel: #e6ecf3;
+      --text: #314056;
+      --muted: #6f7f95;
+      --accent: #6d8cff;
+      --success: #3ba86e;
+      --danger: #d96b6b;
+      --shadow-light: rgba(255,255,255,0.95);
+      --shadow-dark: rgba(163,177,198,0.6);
+      --radius-xl: 28px;
+      --radius-md: 14px;
+      --landing-width-desktop: min(60%, 760px);
+      --landing-width-mobile: 90%;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: minmax(340px, 460px) 1fr;
+      gap: 28px;
+      padding: 24px;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .panel,
+    .preview-card,
+    .toolbar,
+    .status,
+    .input,
+    textarea,
+    .button,
+    .picker-row {
+      background: var(--panel);
+      border: none;
+      outline: none;
+      box-shadow: 10px 10px 24px var(--shadow-dark), -10px -10px 24px var(--shadow-light);
+    }
+
+    .panel {
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      height: calc(100vh - 48px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      align-self: start;
+    }
+
+    .right-side {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      min-width: 0;
+      height: calc(100vh - 48px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-right: 8px;
+    }
+
+    .title-wrap h1 {
+      margin: 0;
+      font-size: 1.7rem;
+      letter-spacing: -0.03em;
+    }
+
+    .title-wrap p,
+    .section-head p,
+    .hint,
+    .status,
+    .hero-copy p,
+    .logo-placeholder,
+    .empty-block {
+      color: var(--muted);
+    }
+
+    .title-wrap p,
+    .section-head p,
+    .hint,
+    .hero-copy p {
+      line-height: 1.5;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field label {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .input,
+    textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      color: var(--text);
+      background: #e8eef5;
+    }
+
+    .input:focus,
+    textarea:focus {
+      box-shadow: inset 4px 4px 10px rgba(163,177,198,0.45), inset -4px -4px 10px rgba(255,255,255,0.95);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 130px;
+      line-height: 1.55;
+    }
+
+    .picker-row {
+      border-radius: 18px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .color-picker {
+      width: 100%;
+      height: 52px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .toolbar {
+      border-radius: var(--radius-xl);
+      padding: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .button {
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-weight: 700;
+      color: var(--text);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      user-select: none;
+    }
+
+    .button:hover { transform: translateY(-1px); }
+    .button:active {
+      transform: translateY(1px);
+      box-shadow: inset 5px 5px 10px rgba(163,177,198,0.45), inset -5px -5px 10px rgba(255,255,255,0.95);
+    }
+
+    .button.primary { color: var(--accent); }
+    .button.success { color: var(--success); }
+    .button.danger { color: var(--danger); }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 1.3rem;
+      letter-spacing: -0.02em;
+    }
+
+    .status {
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-size: 0.92rem;
+    }
+
+    .preview-shell { padding: 8px; }
+
+    .preview-card {
+      border-radius: 34px;
+      padding: 28px 18px 36px;
+      min-height: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.24), rgba(255,255,255,0.08));
+    }
+
+    .logo-wrap,
+    .hero-copy,
+    .media-stack,
+    .cta-wrap,
+    .empty-block {
+      width: var(--landing-width-desktop);
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .logo-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+
+    .logo-image {
+      width: 110px;
+      height: 110px;
+      border-radius: 24px;
+      object-fit: cover;
+      background: rgba(255,255,255,0.35);
+      box-shadow: 8px 8px 20px rgba(163,177,198,0.45), -8px -8px 20px rgba(255,255,255,0.8);
+    }
+
+    .logo-placeholder {
+      width: 110px;
+      height: 110px;
+      border-radius: 24px;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+      text-align: center;
+      background: rgba(255,255,255,0.25);
+      box-shadow: inset 4px 4px 10px rgba(163,177,198,0.35), inset -4px -4px 10px rgba(255,255,255,0.95);
+    }
+
+    .hero-copy { text-align: center; }
+    .hero-copy h3 {
+      margin: 0;
+      font-size: 2rem;
+      letter-spacing: -0.04em;
+    }
+    .hero-copy h4 {
+      margin: 8px 0 0;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .hero-copy p { margin: 14px 0 0; }
+
+    .media-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow: hidden;
+      border-radius: 22px;
+    }
+
+    .media-item {
+      display: block;
+      padding: 0;
+      margin: 0;
+      line-height: 0;
+    }
+
+    .media-image,
+    .media-frame,
+    .media-link {
+      width: 100%;
+      display: block;
+      border: 0;
+      border-radius: 0;
+    }
+
+    .media-image { height: auto; object-fit: cover; }
+    .media-frame {
+      aspect-ratio: 9 / 16;
+      min-height: 420px;
+      background: #111;
+    }
+
+    .media-link {
+      padding: 18px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--accent);
+      background: rgba(255,255,255,0.35);
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .cta-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 14px;
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 22px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+      color: var(--text);
+      background: rgba(255,255,255,0.35);
+      box-shadow: 8px 8px 18px rgba(163,177,198,0.42), -8px -8px 18px rgba(255,255,255,0.9);
+    }
+
+    .empty-block {
+      padding: 22px;
+      text-align: center;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.25);
+      box-shadow: inset 4px 4px 10px rgba(163,177,198,0.38), inset -4px -4px 10px rgba(255,255,255,0.95);
+    }
+
+    .wa-preview {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      text-decoration: none;
+      font-size: 26px;
+      background: #25D366;
+      color: white;
+      box-shadow: 10px 10px 24px rgba(0,0,0,0.12);
+      z-index: 9999;
+    }
+
+    .file-input { display: none; }
+
+    @media (max-width: 1080px) {
+      .app {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
+      }
+      .panel,
+      .right-side {
+        height: auto;
+        overflow: visible;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .preview-card { padding: 20px 8px 28px; }
+      .logo-wrap,
+      .hero-copy,
+      .media-stack,
+      .cta-wrap,
+      .empty-block {
+        width: var(--landing-width-mobile);
+      }
+      .media-frame { min-height: 340px; }
+      .wa-preview { right: 14px; bottom: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="panel">
+      <div class="title-wrap">
+        <h1>Creador de landing visual</h1>
+        <p>Configuración independiente a la izquierda y resultado independiente a la derecha.</p>
+      </div>
+
+      <div class="field">
+        <label for="bgColorPicker">Color de fondo</label>
+        <div class="hint">Usa el selector libre o escribe un color HEX o RGB.</div>
+        <div class="picker-row">
+          <input id="bgColorPicker" class="color-picker" type="color" value="#eef3f8" />
+          <input id="bgColorText" class="input" type="text" value="#eef3f8" placeholder="#eef3f8 o rgb(240,243,248)" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="logoUrl">Link del logo o imagen representativa</label>
+        <input id="logoUrl" class="input" type="text" placeholder="https://sitio.com/logo-o-imagen.jpg" />
+      </div>
+
+      <div class="field">
+        <label for="title">Título</label>
+        <input id="title" class="input" type="text" placeholder="Ej: Nueva colección visual" />
+      </div>
+
+      <div class="field">
+        <label for="subtitle">Subtítulo</label>
+        <input id="subtitle" class="input" type="text" placeholder="Ej: Campaña / lanzamiento / storytelling" />
+      </div>
+
+      <div class="field">
+        <label for="description">Descripción</label>
+        <textarea id="description" placeholder="Escribe una introducción corta o media para acompañar la secuencia visual."></textarea>
+      </div>
+
+      <div class="field">
+        <label for="media">Imágenes y videos</label>
+        <div class="hint">Un enlace por línea. Puedes mezclar imágenes, YouTube y Vimeo.</div>
+        <textarea id="media" placeholder="https://sitio.com/imagen-1.jpg
+https://youtube.com/watch?v=...
+https://sitio.com/imagen-2.png"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="ctaText">Texto del botón de redirección</label>
+        <input id="ctaText" class="input" type="text" value="Quiero más información" placeholder="Quiero más información" />
+      </div>
+
+      <div class="field">
+        <label for="ctaLink">Link de redirección</label>
+        <input id="ctaLink" class="input" type="text" placeholder="https://tu-sitio.com/destino" />
+      </div>
+
+      <div class="field">
+        <label for="waNumber">Número de WhatsApp</label>
+        <input id="waNumber" class="input" type="text" placeholder="573001234567" />
+      </div>
+
+      <div class="field">
+        <label for="waText">Texto del mensaje de WhatsApp</label>
+        <textarea id="waText" placeholder="Hola, quiero más información sobre esta landing."></textarea>
+      </div>
+
+      <div class="toolbar">
+        <button class="button primary" id="btnCreate">Actualizar landing</button>
+        <button class="button success" id="btnSaveJson">Guardar datos JSON</button>
+        <button class="button" id="btnLoadJson">Subir JSON</button>
+        <button class="button" id="btnPreviewWindow">Vista externa</button>
+        <button class="button danger" id="btnSaveHtml">Guardar landing web</button>
+      </div>
+
+      <input class="file-input" type="file" id="jsonFile" accept="application/json,.json" />
+    </section>
+
+    <section class="right-side">
+      <div class="section-head">
+        <div>
+          <h2>Vista preliminar</h2>
+          <p>La izquierda y la derecha se desplazan por separado.</p>
+        </div>
+      </div>
+
+      <div class="status" id="status">Listo para crear tu landing visual.</div>
+
+      <div class="preview-shell">
+        <article class="preview-card" id="previewCard">
+          <div class="logo-wrap" id="previewLogoWrap">
+            <div class="logo-placeholder">Logo o imagen</div>
+          </div>
+
+          <div class="hero-copy">
+            <h3 id="previewTitle">Título de ejemplo</h3>
+            <h4 id="previewSubtitle">Subtítulo de ejemplo</h4>
+            <p id="previewDescription">Aquí se mostrará una descripción corta para introducir la secuencia visual de la landing.</p>
+          </div>
+
+          <div class="media-stack" id="previewMedia">
+            <div class="empty-block">Aún no has agregado imágenes o videos.</div>
+          </div>
+
+          <div class="cta-wrap" id="previewCtaWrap"></div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <a id="previewWhatsApp" class="wa-preview" href="#" aria-label="WhatsApp" title="WhatsApp">✆</a>
+
+  <script>
+    const fields = {
+      bgColorPicker: document.getElementById('bgColorPicker'),
+      bgColorText: document.getElementById('bgColorText'),
+      logoUrl: document.getElementById('logoUrl'),
+      title: document.getElementById('title'),
+      subtitle: document.getElementById('subtitle'),
+      description: document.getElementById('description'),
+      media: document.getElementById('media'),
+      ctaText: document.getElementById('ctaText'),
+      ctaLink: document.getElementById('ctaLink'),
+      waNumber: document.getElementById('waNumber'),
+      waText: document.getElementById('waText')
+    };
+
+    const preview = {
+      card: document.getElementById('previewCard'),
+      logoWrap: document.getElementById('previewLogoWrap'),
+      title: document.getElementById('previewTitle'),
+      subtitle: document.getElementById('previewSubtitle'),
+      description: document.getElementById('previewDescription'),
+      media: document.getElementById('previewMedia'),
+      ctaWrap: document.getElementById('previewCtaWrap'),
+      whatsapp: document.getElementById('previewWhatsApp')
+    };
+
+    const statusBox = document.getElementById('status');
+    const jsonFileInput = document.getElementById('jsonFile');
+
+    function cleanLines(value) {
+      return value.split('\n').map(line => line.trim()).filter(Boolean);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function setStatus(message) {
+      statusBox.textContent = message;
+    }
+
+    function normalizePhone(value) {
+      return String(value || '').replace(/[^\d]/g, '');
+    }
+
+    function isValidCssColor(value) {
+      const probe = new Option().style;
+      probe.color = '';
+      probe.color = value;
+      return probe.color !== '';
+    }
+
+    function isHexColor(value) {
+      return /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/.test(value);
+    }
+
+    function isImageUrl(url) {
+      return /\.(jpg|jpeg|png|webp|gif|svg|avif)(\?.*)?$/i.test(url);
+    }
+
+    function getYoutubeEmbed(url) {
+      try {
+        const parsed = new URL(url);
+        if (parsed.hostname.includes('youtu.be')) {
+          const id = parsed.pathname.replace('/', '').trim();
+          return id ? 'https://www.youtube.com/embed/' + id : null;
+        }
+        if (parsed.hostname.includes('youtube.com')) {
+          const id = parsed.searchParams.get('v');
+          if (id) return 'https://www.youtube.com/embed/' + id;
+          const parts = parsed.pathname.split('/').filter(Boolean);
+          const idx = parts.findIndex(part => part === 'embed' || part === 'shorts');
+          if (idx !== -1 && parts[idx + 1]) return 'https://www.youtube.com/embed/' + parts[idx + 1];
+        }
+      } catch (error) {}
+      return null;
+    }
+
+    function getVimeoEmbed(url) {
+      try {
+        const parsed = new URL(url);
+        if (!parsed.hostname.includes('vimeo.com')) return null;
+        const id = parsed.pathname.split('/').filter(Boolean).find(part => /^\d+$/.test(part));
+        return id ? 'https://player.vimeo.com/video/' + id : null;
+      } catch (error) {}
+      return null;
+    }
+
+    function getMediaType(url) {
+      if (isImageUrl(url)) return 'image';
+      if (getYoutubeEmbed(url) || getVimeoEmbed(url)) return 'video';
+      return 'link';
+    }
+
+    function getEmbedUrl(url) {
+      return getYoutubeEmbed(url) || getVimeoEmbed(url) || '';
+    }
+
+    function getSafeBgColor() {
+      const raw = fields.bgColorText.value.trim() || fields.bgColorPicker.value;
+      return isValidCssColor(raw) ? raw : '#eef3f8';
+    }
+
+    function updateColorInputs(color) {
+      fields.bgColorText.value = color;
+      if (isHexColor(color)) fields.bgColorPicker.value = color;
+    }
+
+    function applyBackground(color) {
+      document.documentElement.style.setProperty('--bg', color);
+      document.body.style.background = color;
+      preview.card.style.background = color;
+    }
+
+    function createLogoNode(url) {
+      if (!url) {
+        const div = document.createElement('div');
+        div.className = 'logo-placeholder';
+        div.textContent = 'Logo o imagen';
+        return div;
+      }
+      const img = document.createElement('img');
+      img.className = 'logo-image';
+      img.src = url;
+      img.alt = 'Logo o imagen representativa';
+      img.onerror = () => {
+        img.replaceWith(createLogoNode(''));
+      };
+      return img;
+    }
+
+    function createMediaElement(url) {
+      const type = getMediaType(url);
+      const wrapper = document.createElement('div');
+      wrapper.className = 'media-item';
+
+      if (type === 'image') {
+        const img = document.createElement('img');
+        img.className = 'media-image';
+        img.src = url;
+        img.alt = 'Bloque visual';
+        img.loading = 'lazy';
+        wrapper.appendChild(img);
+        return wrapper;
+      }
+
+      if (type === 'video') {
+        const iframe = document.createElement('iframe');
+        iframe.className = 'media-frame';
+        iframe.src = getEmbedUrl(url);
+        iframe.title = 'Video embebido';
+        iframe.loading = 'lazy';
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        iframe.allowFullscreen = true;
+        wrapper.appendChild(iframe);
+        return wrapper;
+      }
+
+      const link = document.createElement('a');
+      link.className = 'media-link';
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = url;
+      wrapper.appendChild(link);
+      return wrapper;
+    }
+
+    function buildWhatsappLink(number, text) {
+      const cleanNumber = normalizePhone(number);
+      if (!cleanNumber) return '#';
+      return 'https://wa.me/' + cleanNumber + '?text=' + encodeURIComponent(text || 'Hola, quiero más información.');
+    }
+
+    function getFormData() {
+      return {
+        bgColor: getSafeBgColor(),
+        logoUrl: fields.logoUrl.value.trim(),
+        title: fields.title.value.trim(),
+        subtitle: fields.subtitle.value.trim(),
+        description: fields.description.value.trim(),
+        media: cleanLines(fields.media.value),
+        ctaText: fields.ctaText.value.trim() || 'Quiero más información',
+        ctaLink: fields.ctaLink.value.trim(),
+        waNumber: normalizePhone(fields.waNumber.value),
+        waText: fields.waText.value.trim(),
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    function setFormData(data = {}) {
+      updateColorInputs(data.bgColor || '#eef3f8');
+      fields.logoUrl.value = data.logoUrl || '';
+      fields.title.value = data.title || '';
+      fields.subtitle.value = data.subtitle || '';
+      fields.description.value = data.description || '';
+      fields.media.value = Array.isArray(data.media)
+        ? data.media.join('\n')
+        : [...(Array.isArray(data.images) ? data.images : []), ...(Array.isArray(data.videos) ? data.videos : [])].join('\n');
+      fields.ctaText.value = data.ctaText || 'Quiero más información';
+      fields.ctaLink.value = data.ctaLink || '';
+      fields.waNumber.value = data.waNumber || '';
+      fields.waText.value = data.waText || '';
+      renderPreview();
+    }
+
+    function renderPreview() {
+      const data = getFormData();
+      applyBackground(data.bgColor);
+
+      preview.logoWrap.innerHTML = '';
+      preview.logoWrap.appendChild(createLogoNode(data.logoUrl));
+      preview.title.textContent = data.title || 'Título de ejemplo';
+      preview.subtitle.textContent = data.subtitle || 'Subtítulo de ejemplo';
+      preview.description.textContent = data.description || 'Aquí se mostrará una descripción corta para introducir la secuencia visual de la landing.';
+
+      preview.media.innerHTML = '';
+      if (!data.media.length) {
+        preview.media.innerHTML = '<div class="empty-block">Aún no has agregado imágenes o videos.</div>';
+      } else {
+        data.media.forEach(url => preview.media.appendChild(createMediaElement(url)));
+      }
+
+      preview.ctaWrap.innerHTML = '';
+      if (data.ctaLink) {
+        const link = document.createElement('a');
+        link.className = 'cta-button';
+        link.href = data.ctaLink;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = data.ctaText;
+        preview.ctaWrap.appendChild(link);
+      }
+
+      preview.whatsapp.href = buildWhatsappLink(data.waNumber, data.waText);
+      preview.whatsapp.style.display = data.waNumber ? 'grid' : 'none';
+
+      localStorage.setItem('landing-visual-v5-draft', JSON.stringify(data));
+      setStatus('Vista actualizada correctamente.');
+      return data;
+    }
+
+    function downloadFile(filename, content, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function saveJson() {
+      const data = renderPreview();
+      const safeName = (data.title || 'landing-visual-v5').toLowerCase().replace(/[^a-z0-9]+/gi, '-');
+      downloadFile(safeName + '.json', JSON.stringify(data, null, 2), 'application/json');
+      setStatus('Archivo JSON guardado correctamente.');
+    }
+
+    function buildStandaloneHtml(data) {
+      const logoBlock = data.logoUrl
+        ? '<div class="logo-wrap"><img class="logo-image" src="' + escapeHtml(data.logoUrl) + '" alt="Logo o imagen representativa"></div>'
+        : '<div class="logo-wrap"><div class="logo-placeholder">Logo o imagen</div></div>';
+
+      const ctaBlock = data.ctaLink
+        ? '<div class="cta-wrap"><a class="cta-button" href="' + escapeHtml(data.ctaLink) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(data.ctaText || 'Quiero más información') + '</a></div>'
+        : '';
+
+      const mediaBlocks = data.media.length
+        ? data.media.map(url => {
+            const type = getMediaType(url);
+            if (type === 'image') {
+              return '<div class="media-item"><img class="media-image" src="' + escapeHtml(url) + '" alt="Bloque visual"></div>';
+            }
+            if (type === 'video') {
+              return '<div class="media-item"><iframe class="media-frame" src="' + escapeHtml(getEmbedUrl(url)) + '" title="Video embebido" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>';
+            }
+            return '<div class="media-item"><a class="media-link" href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(url) + '</a></div>';
+          }).join('')
+        : '<div class="empty-block">Sin contenido visual.</div>';
+
+      const whatsappBlock = data.waNumber
+        ? '<a class="wa-preview" href="' + escapeHtml(buildWhatsappLink(data.waNumber, data.waText)) + '" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">✆</a>'
+        : '';
+
+      return `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(data.title || 'Landing visual')}</title>
+  <style>
+    :root { --bg:${escapeHtml(data.bgColor)}; --text:#314056; --muted:#6f7f95; --accent:#6d8cff; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+    .wrap { padding:24px 12px 40px; }
+    .logo-wrap,.hero-copy,.media-stack,.cta-wrap,.empty-block { width:min(60%, 760px); margin-left:auto; margin-right:auto; }
+    .logo-wrap { display:flex; justify-content:center; margin-bottom:10px; }
+    .logo-image { width:110px; height:110px; border-radius:24px; object-fit:cover; background:rgba(255,255,255,0.35); box-shadow:8px 8px 20px rgba(163,177,198,0.45), -8px -8px 20px rgba(255,255,255,0.8); }
+    .logo-placeholder { width:110px; height:110px; border-radius:24px; display:grid; place-items:center; padding:12px; text-align:center; color:var(--muted); background:rgba(255,255,255,0.25); box-shadow:inset 4px 4px 10px rgba(163,177,198,0.35), inset -4px -4px 10px rgba(255,255,255,0.95); }
+    .hero-copy { text-align:center; }
+    .hero-copy h1 { margin:0; font-size:2rem; letter-spacing:-0.04em; }
+    .hero-copy h2 { margin:8px 0 0; color:var(--accent); font-size:1.05rem; }
+    .hero-copy p { margin:14px 0 0; color:var(--muted); line-height:1.75; }
+    .media-stack { display:flex; flex-direction:column; gap:0; overflow:hidden; border-radius:22px; }
+    .media-item { display:block; line-height:0; }
+    .media-image,.media-frame,.media-link { width:100%; display:block; border:0; border-radius:0; }
+    .media-image { height:auto; object-fit:cover; }
+    .media-frame { aspect-ratio:9/16; min-height:420px; background:#111; }
+    .media-link { padding:18px; text-align:center; text-decoration:none; color:var(--accent); background:rgba(255,255,255,0.35); font-weight:700; line-height:1.4; }
+    .cta-wrap { display:flex; justify-content:center; margin-top:14px; }
+    .cta-button { display:inline-flex; align-items:center; justify-content:center; padding:14px 22px; border-radius:999px; text-decoration:none; font-weight:700; color:var(--text); background:rgba(255,255,255,0.35); box-shadow:8px 8px 18px rgba(163,177,198,0.42), -8px -8px 18px rgba(255,255,255,0.9); }
+    .empty-block { color:var(--muted); padding:22px; text-align:center; border-radius:18px; background:rgba(255,255,255,0.25); }
+    .wa-preview { position:fixed; right:18px; bottom:18px; width:58px; height:58px; border-radius:999px; display:grid; place-items:center; text-decoration:none; font-size:26px; background:#25D366; color:white; box-shadow:10px 10px 24px rgba(0,0,0,0.12); z-index:9999; }
+    @media (max-width:720px) { .logo-wrap,.hero-copy,.media-stack,.cta-wrap,.empty-block { width:90%; } .wrap { padding:18px 0 28px; } .media-frame { min-height:340px; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    ${logoBlock}
+    <div class="hero-copy">
+      <h1>${escapeHtml(data.title || 'Sin título')}</h1>
+      <h2>${escapeHtml(data.subtitle || 'Sin subtítulo')}</h2>
+      <p>${escapeHtml(data.description || '')}</p>
+    </div>
+    <div class="media-stack">${mediaBlocks}</div>
+    ${ctaBlock}
+  </div>
+  ${whatsappBlock}
+</body>
+</html>`;
+    }
+
+    function saveHtml() {
+      const data = renderPreview();
+      const safeName = (data.title || 'landing-visual-v5').toLowerCase().replace(/[^a-z0-9]+/gi, '-');
+      downloadFile(safeName + '.html', buildStandaloneHtml(data), 'text/html;charset=utf-8');
+      setStatus('Landing web HTML guardada correctamente.');
+    }
+
+    function openPreviewWindow() {
+      const data = renderPreview();
+      const win = window.open('', '_blank', 'width=1000,height=900');
+      if (!win) {
+        setStatus('No se pudo abrir la ventana externa. Revisa el bloqueador de ventanas.');
+        return;
+      }
+      win.document.write(buildStandaloneHtml(data));
+      win.document.close();
+      setStatus('Vista externa abierta correctamente.');
+    }
+
+    function loadJsonFile(file) {
+      const reader = new FileReader();
+      reader.onload = event => {
+        try {
+          const parsed = JSON.parse(event.target.result);
+          setFormData(parsed);
+          setStatus('JSON cargado correctamente.');
+        } catch (error) {
+          console.error(error);
+          setStatus('El archivo JSON no es válido.');
+        }
+      };
+      reader.readAsText(file, 'utf-8');
+    }
+
+    document.getElementById('btnCreate').addEventListener('click', renderPreview);
+    document.getElementById('btnSaveJson').addEventListener('click', saveJson);
+    document.getElementById('btnLoadJson').addEventListener('click', () => jsonFileInput.click());
+    document.getElementById('btnPreviewWindow').addEventListener('click', openPreviewWindow);
+    document.getElementById('btnSaveHtml').addEventListener('click', saveHtml);
+
+    fields.bgColorPicker.addEventListener('input', event => {
+      updateColorInputs(event.target.value);
+      renderPreview();
+    });
+
+    fields.bgColorText.addEventListener('input', renderPreview);
+
+    jsonFileInput.addEventListener('change', event => {
+      const file = event.target.files[0];
+      if (file) loadJsonFile(file);
+      event.target.value = '';
+    });
+
+    [fields.logoUrl, fields.title, fields.subtitle, fields.description, fields.media, fields.ctaText, fields.ctaLink, fields.waNumber, fields.waText].forEach(field => {
+      field.addEventListener('input', renderPreview);
+    });
+
+    const savedDraft = localStorage.getItem('landing-visual-v5-draft');
+    if (savedDraft) {
+      try {
+        setFormData(JSON.parse(savedDraft));
+        setStatus('Se recuperó un borrador local.');
+      } catch (error) {
+        renderPreview();
+      }
+    } else {
+      renderPreview();
+    }
+  </script>
+</body>
+</html>
