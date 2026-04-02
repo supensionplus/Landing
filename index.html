@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Creador de Landing Visual V7</title>
+  <title>Creador de Landing Visual V9</title>
   <style>
     :root {
       --bg: #eef3f8;
@@ -33,7 +33,7 @@
 
     .app {
       display: grid;
-      grid-template-columns: minmax(340px, 460px) 1fr;
+      grid-template-columns: minmax(340px, 480px) 1fr;
       gap: 28px;
       padding: 24px;
       height: 100vh;
@@ -47,7 +47,8 @@
     .input,
     textarea,
     .button,
-    .picker-row {
+    .picker-row,
+    select {
       background: var(--panel);
       border: none;
       outline: none;
@@ -112,7 +113,8 @@
     }
 
     .input,
-    textarea {
+    textarea,
+    select {
       width: 100%;
       padding: 14px 16px;
       border-radius: var(--radius-md);
@@ -122,13 +124,14 @@
     }
 
     .input:focus,
-    textarea:focus {
+    textarea:focus,
+    select:focus {
       box-shadow: inset 4px 4px 10px rgba(163,177,198,0.45), inset -4px -4px 10px rgba(255,255,255,0.95);
     }
 
     textarea {
       resize: vertical;
-      min-height: 130px;
+      min-height: 120px;
       line-height: 1.55;
     }
 
@@ -338,6 +341,10 @@
       z-index: 9999;
     }
 
+    .fomo-card{
+      background: var(--bg, #ffffff) !important;
+    }
+
     .file-input { display: none; }
 
     @media (max-width: 1080px) {
@@ -372,7 +379,7 @@
     <section class="panel">
       <div class="title-wrap">
         <h1>Creador de landing visual</h1>
-        <p>Versión preparada para exportar HTML con metadatos para compartir mejor en WhatsApp, Telegram, Facebook y X.</p>
+        <p>Versión corregida. Los botones inferiores vuelven a funcionar y la imagen de compartir se pega como enlace manual.</p>
       </div>
 
       <div class="field">
@@ -395,8 +402,14 @@
       </div>
 
       <div class="field">
-        <label for="logoUrl">Link del logo o imagen representativa</label>
-        <input id="logoUrl" class="input" type="text" placeholder="https://sitio.com/logo-o-imagen.jpg" />
+        <label for="logoUrl">Link del logo (imagen dentro de la página)</label>
+        <input id="logoUrl" class="input" type="text" placeholder="https://sitio.com/logo.jpg" />
+      </div>
+
+      <div class="field">
+        <label for="shareImageUrl">Imagen para compartir (WhatsApp / redes)</label>
+        <div class="hint">Pega aquí el link de la imagen anuncio que quieres que salga al compartir.</div>
+        <input id="shareImageUrl" class="input" type="text" placeholder="https://tusitio.com/share.jpg" />
       </div>
 
       <div class="field">
@@ -416,7 +429,7 @@
 
       <div class="field">
         <label for="media">Imágenes y videos</label>
-        <div class="hint">Un enlace por línea. Puedes mezclar imágenes, YouTube y Vimeo. Para el preview social se usará primero el logo y si no existe, la primera imagen válida.</div>
+        <div class="hint">Un enlace por línea. Puedes mezclar imágenes, YouTube y Vimeo.</div>
         <textarea id="media" placeholder="https://sitio.com/imagen-1.jpg
 https://youtube.com/watch?v=...
 https://sitio.com/imagen-2.png"></textarea>
@@ -443,11 +456,11 @@ https://sitio.com/imagen-2.png"></textarea>
       </div>
 
       <div class="toolbar">
-        <button class="button primary" id="btnCreate">Actualizar landing</button>
-        <button class="button success" id="btnSaveJson">Guardar datos JSON</button>
-        <button class="button" id="btnLoadJson">Subir JSON</button>
-        <button class="button" id="btnPreviewWindow">Vista externa</button>
-        <button class="button danger" id="btnSaveHtml">Guardar landing web</button>
+        <button class="button primary" id="btnCreate" type="button">Actualizar landing</button>
+        <button class="button success" id="btnSaveJson" type="button">Guardar datos JSON</button>
+        <button class="button" id="btnLoadJson" type="button">Subir JSON</button>
+        <button class="button" id="btnPreviewWindow" type="button">Vista externa</button>
+        <button class="button danger" id="btnSaveHtml" type="button">Guardar landing web</button>
       </div>
 
       <input class="file-input" type="file" id="jsonFile" accept="application/json,.json" />
@@ -457,7 +470,7 @@ https://sitio.com/imagen-2.png"></textarea>
       <div class="section-head">
         <div>
           <h2>Vista preliminar</h2>
-          <p>La exportación incluye title, description, Open Graph, Twitter Cards, canonical, og:url y favicon opcional.</p>
+          <p>La exportación incluye metadatos sociales, favicon opcional y la imagen de compartir manual.</p>
         </div>
       </div>
 
@@ -485,7 +498,9 @@ https://sitio.com/imagen-2.png"></textarea>
     </section>
   </div>
 
-  <a id="previewWhatsApp" class="wa-preview" href="#" aria-label="WhatsApp" title="WhatsApp">✆</a>
+  <a id="previewWhatsApp" class="wa-preview" href="#" aria-label="WhatsApp" title="WhatsApp">
+    <img src="https://i.ibb.co/N6pySBBV/boton-whatsapp-transp.png" style="width:32px; height:32px;">
+  </a>
 
   <script>
     const fields = {
@@ -494,6 +509,7 @@ https://sitio.com/imagen-2.png"></textarea>
       pageUrl: document.getElementById('pageUrl'),
       faviconUrl: document.getElementById('faviconUrl'),
       logoUrl: document.getElementById('logoUrl'),
+      shareImageUrl: document.getElementById('shareImageUrl'),
       title: document.getElementById('title'),
       subtitle: document.getElementById('subtitle'),
       description: document.getElementById('description'),
@@ -577,7 +593,9 @@ https://sitio.com/imagen-2.png"></textarea>
           const idx = parts.findIndex(part => part === 'embed' || part === 'shorts');
           if (idx !== -1 && parts[idx + 1]) return 'https://www.youtube.com/embed/' + parts[idx + 1];
         }
-      } catch {}
+      } catch {
+        return null;
+      }
       return null;
     }
 
@@ -587,7 +605,9 @@ https://sitio.com/imagen-2.png"></textarea>
         if (!parsed.hostname.includes('vimeo.com')) return null;
         const id = parsed.pathname.split('/').filter(Boolean).find(part => /^\d+$/.test(part));
         return id ? 'https://player.vimeo.com/video/' + id : null;
-      } catch {}
+      } catch {
+        return null;
+      }
       return null;
     }
 
@@ -678,6 +698,7 @@ https://sitio.com/imagen-2.png"></textarea>
     }
 
     function getPreviewImage(data) {
+      if (data.shareImageUrl) return data.shareImageUrl;
       return data.logoUrl || data.media.find(url => getMediaType(url) === 'image') || '';
     }
 
@@ -691,6 +712,7 @@ https://sitio.com/imagen-2.png"></textarea>
         pageUrl: fields.pageUrl.value.trim(),
         faviconUrl: fields.faviconUrl.value.trim(),
         logoUrl: fields.logoUrl.value.trim(),
+        shareImageUrl: fields.shareImageUrl.value.trim(),
         title: fields.title.value.trim(),
         subtitle: fields.subtitle.value.trim(),
         description: fields.description.value.trim(),
@@ -708,6 +730,7 @@ https://sitio.com/imagen-2.png"></textarea>
       fields.pageUrl.value = data.pageUrl || '';
       fields.faviconUrl.value = data.faviconUrl || '';
       fields.logoUrl.value = data.logoUrl || '';
+      fields.shareImageUrl.value = data.shareImageUrl || '';
       fields.title.value = data.title || '';
       fields.subtitle.value = data.subtitle || '';
       fields.description.value = data.description || '';
@@ -754,14 +777,14 @@ https://sitio.com/imagen-2.png"></textarea>
 
       const previewImage = getPreviewImage(data);
       if (previewImage && !isLikelyUrl(previewImage)) {
-        setStatus('Vista actualizada. Ojo: la imagen de preview social debe ser una URL publica directa.');
+        setStatus('Vista actualizada. Ojo: la imagen de preview social debe ser una URL pública directa.');
       } else if (data.pageUrl && !isLikelyUrl(data.pageUrl)) {
         setStatus('Vista actualizada. Ojo: la URL final debe comenzar con http o https.');
       } else {
         setStatus('Vista actualizada correctamente.');
       }
 
-      localStorage.setItem('landing-visual-v7-draft', JSON.stringify(data));
+      localStorage.setItem('landing-visual-v9-draft', JSON.stringify(data));
       return data;
     }
 
@@ -779,7 +802,7 @@ https://sitio.com/imagen-2.png"></textarea>
 
     function saveJson() {
       const data = renderPreview();
-      const safeName = (data.title || 'landing-visual-v7').toLowerCase().replace(/[^a-z0-9]+/gi, '-');
+      const safeName = (data.title || 'landing-visual-v9').toLowerCase().replace(/[^a-z0-9]+/gi, '-');
       downloadFile(safeName + '.json', JSON.stringify(data, null, 2), 'application/json');
       setStatus('Archivo JSON guardado correctamente.');
     }
@@ -807,7 +830,7 @@ https://sitio.com/imagen-2.png"></textarea>
         : '<div class="empty-block">Sin contenido visual.</div>';
 
       const whatsappBlock = data.waNumber
-        ? '<a class="wa-preview" href="' + escapeHtml(buildWhatsappLink(data.waNumber, data.waText)) + '" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">✆</a>'
+        ? '<a class="wa-preview" href="' + escapeHtml(buildWhatsappLink(data.waNumber, data.waText)) + '" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><img src="https://i.ibb.co/N6pySBBV/boton-whatsapp-transp.png" style="width:32px; height:32px;"></a>'
         : '';
 
       const previewImage = getPreviewImage(data);
@@ -860,7 +883,7 @@ https://sitio.com/imagen-2.png"></textarea>
     .cta-wrap { display:flex; justify-content:center; margin-top:14px; }
     .cta-button { display:inline-flex; align-items:center; justify-content:center; padding:14px 22px; border-radius:999px; text-decoration:none; font-weight:700; color:var(--text); background:rgba(255,255,255,0.35); box-shadow:8px 8px 18px rgba(163,177,198,0.42), -8px -8px 18px rgba(255,255,255,0.9); }
     .empty-block { color:var(--muted); padding:22px; text-align:center; border-radius:18px; background:rgba(255,255,255,0.25); }
-    .wa-preview { position:fixed; right:18px; bottom:18px; width:58px; height:58px; border-radius:999px; display:grid; place-items:center; text-decoration:none; font-size:26px; background:#25D366; color:white; box-shadow:10px 10px 24px rgba(0,0,0,0.12); z-index:9999; }
+    .wa-preview { position:fixed; right:18px; bottom:18px; width:58px; height:58px; border-radius:999px; display:grid; place-items:center; text-decoration:none; font-size:26px; background:#25D366; color:white; box-shadow:10px 10px 24px rgba(0,0,0,0.12); z-index:9999; } .wa-preview img { width:32px; height:32px; } .fomo-card{ background: var(--bg, #ffffff) !important; }
     @media (max-width:720px) { .logo-wrap,.hero-copy,.media-stack,.cta-wrap,.empty-block { width:90%; } .wrap { padding:18px 0 28px; } .media-frame { min-height:340px; } }
   </style>
 </head>
@@ -882,7 +905,7 @@ https://sitio.com/imagen-2.png"></textarea>
 
     function saveHtml() {
       const data = renderPreview();
-      const safeName = (data.title || 'landing-visual-v7').toLowerCase().replace(/[^a-z0-9]+/gi, '-');
+      const safeName = (data.title || 'landing-visual-v9').toLowerCase().replace(/[^a-z0-9]+/gi, '-');
       downloadFile(safeName + '.html', buildStandaloneHtml(data), 'text/html;charset=utf-8');
       setStatus('Landing web HTML guardada correctamente.');
     }
@@ -933,16 +956,30 @@ https://sitio.com/imagen-2.png"></textarea>
       event.target.value = '';
     });
 
-    [fields.pageUrl, fields.faviconUrl, fields.logoUrl, fields.title, fields.subtitle, fields.description, fields.media, fields.ctaText, fields.ctaLink, fields.waNumber, fields.waText].forEach(field => {
+    [
+      fields.pageUrl,
+      fields.faviconUrl,
+      fields.logoUrl,
+      fields.shareImageUrl,
+      fields.title,
+      fields.subtitle,
+      fields.description,
+      fields.media,
+      fields.ctaText,
+      fields.ctaLink,
+      fields.waNumber,
+      fields.waText
+    ].forEach(field => {
       field.addEventListener('input', renderPreview);
+      field.addEventListener('change', renderPreview);
     });
 
-    const savedDraft = localStorage.getItem('landing-visual-v7-draft');
+    const savedDraft = localStorage.getItem('landing-visual-v9-draft');
     if (savedDraft) {
       try {
         setFormData(JSON.parse(savedDraft));
         setStatus('Se recuperó un borrador local.');
-      } catch (error) {
+      } catch {
         renderPreview();
       }
     } else {
