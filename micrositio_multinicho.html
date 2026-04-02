@@ -1,0 +1,87 @@
+<!-- ============ MICROSITIO (BARBERIA) · generado por Microsite Builder Multi-Nicho v1.2 ============ -->
+<section id="microsite" class="bb-wrap">
+  <style>
+    #microsite{
+      --bg:#0f141a; --paper:#121a22; --text:#e7eef6; --muted:#9fb0bd; --gold1:#6ea8fe; --gold2:#a3d0ff; --bronze:#4b5d6b; --ring:#223049; --radius:22px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--text);
+      background: radial-gradient(1200px 520px at 15% -10%, #18212b 0%, transparent 60%), radial-gradient(1400px 600px at 110% -20%, #1b2632 0%, transparent 65%), var(--bg);
+      padding:0 0 110px;
+    }
+    .bb-header{ position:relative; text-align:center; padding:52px 16px 30px; background: radial-gradient(1100px 340px at 50% -55%, rgba(255,255,255,.06), transparent 65%), linear-gradient(180deg, rgba(255,255,255,.04), transparent 70%); border-bottom:1px solid rgba(255,255,255,.06)}
+    .bb-avatar{ width:160px; height:160px; border-radius:999px; padding:6px; margin:0 auto 16px; position:relative; background: conic-gradient(from 0deg, var(--gold1), var(--gold2), var(--gold1)); animation: spin 10s linear infinite; box-shadow: 0 12px 26px rgba(0,0,0,.25);}
+    .bb-avatar::after{ content:""; position:absolute; inset:-16px; border-radius:inherit; background: radial-gradient(closest-side, color-mix(in srgb, var(--gold1), transparent 75%), transparent 70%); filter: blur(13px); z-index:-1 }
+    .bb-avatar img{ width:100%; height:100%; border-radius:inherit; object-fit:cover; display:block }
+    @keyframes spin { to { transform: rotate(360deg);} }
+    .bb-name{ margin:10px 0 0; font-size:30px; font-weight:900; letter-spacing:.2px }
+    .bb-handle{ margin:6px 0 0; font-size:13px; color:var(--muted) }
+    .bb-bio{ margin:12px auto 0; max-width:900px; color:var(--muted); line-height:1.55 }
+    .bb-actions{ max-width:1200px; margin:18px auto 10px; padding:0 16px; display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:12px }
+    .bb-btn{ display:flex; align-items:center; justify-content:center; gap:10px; padding:14px 18px; border-radius:999px; text-decoration:none; font-weight:900; background: linear-gradient(90deg, var(--gold1), var(--gold2)); color:#0e1116; border:2px solid rgba(255,255,255,.85); box-shadow: 0 12px 20px rgba(0,0,0,.22); transition: transform .15s ease, box-shadow .15s ease }
+    .bb-btn:hover{ transform: translateY(-2px); box-shadow: 0 18px 28px rgba(0,0,0,.28) }
+    .bb-btn.light{ background:color-mix(in srgb, var(--paper), #000 6%); border:1px solid var(--ring); color:var(--text); box-shadow:0 8px 14px rgba(0,0,0,.18) }
+    .bb-scroller{ position:relative; padding: 12px 0 }
+    .bb-track{ max-width:1200px; margin:0 auto; padding: 0 16px 8px; display:flex; gap:12px; overflow-x:auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch }
+    .bb-track::-webkit-scrollbar{ height:8px } .bb-track::-webkit-scrollbar-thumb{ background:color-mix(in srgb, var(--gold2), #000 50%); border-radius:999px }
+    .bb-slide{ position:relative; min-width: 86%; max-width:86%; height: 240px; border-radius:18px; scroll-snap-align:center; overflow:hidden; text-decoration:none; border:1px solid var(--ring); background:color-mix(in srgb, var(--paper), #000 6%); box-shadow: 0 14px 26px rgba(0,0,0,.25); transition: transform .18s ease, box-shadow .18s ease }
+    @media (min-width: 560px){ .bb-slide{ min-width: 48%; max-width:48%; height: 260px } } @media (min-width: 900px){ .bb-slide{ min-width: 32%; max-width:32%; height: 280px } }
+    .bb-slide img{ width:100%; height:100%; object-fit:cover; display:block; } .bb-slide:hover{ transform: translateY(-2px); box-shadow: 0 20px 34px rgba(0,0,0,.35) }
+    .bb-links{ max-width:1200px; margin:6px auto 0; padding: 0 16px; display:grid; gap:10px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .bb-tile{ display:flex; gap:12px; align-items:center; text-decoration:none; background: linear-gradient(180deg, color-mix(in srgb, var(--paper), #000 8%), color-mix(in srgb, var(--paper), #000 20%)); border:1px solid var(--ring); border-radius:16px; padding:12px; transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease; box-shadow: 0 10px 20px rgba(0,0,0,.25); color:var(--text);}
+    .bb-tile:hover{ transform: translateY(-1px); border-color:color-mix(in srgb, var(--gold2), #000 40%); box-shadow: 0 14px 26px rgba(0,0,0,.32) }
+    .bb-icon{ width:38px; height:38px; border-radius:12px; background: linear-gradient(135deg, var(--gold1), var(--gold2)); display:grid; place-items:center; color:#0e1116; font-weight:900; box-shadow: 0 8px 18px rgba(0,0,0,.25); }
+    .bb-title{ margin:0; font-weight:900 } .bb-sub{ margin:2px 0 0; font-size:12px; color:var(--muted) } .bb-arrow{ margin-left:auto; opacity:.85 }
+    .bb-dock{ position:fixed; inset:auto 0 18px; z-index:2147483647 !important; display:flex; justify-content:center; pointer-events:none; }
+    .bb-dockInner{ pointer-events:auto; display:flex; gap:10px; padding:8px; border-radius:999px; background: color-mix(in srgb, var(--paper), #000 15%); border:1px solid var(--ring); backdrop-filter: blur(10px); box-shadow: 0 20px 30px rgba(0,0,0,.35); }
+    .bb-fab{ display:flex; align-items:center; gap:8px; padding:10px 14px; border-radius:999px; text-decoration:none; font-weight:900; color:#0e1116; background: linear-gradient(90deg, var(--gold1), var(--gold2)); border:2px solid #fff; box-shadow: 0 8px 16px rgba(0,0,0,.22); }
+    .bb-fab.secondary{ background:color-mix(in srgb, var(--paper), #000 10%); border:1px solid var(--ring); color:var(--text); box-shadow:none }
+    .bb-modal{ position:fixed; inset:0; z-index:50; display:none; align-items:center; justify-content:center; background: rgba(0,0,0,.55); padding:18px }
+    .bb-modal.show{ display:flex }
+    .bb-modalCard{ width:min(920px, 96vw); max-height: 92vh; background:color-mix(in srgb, var(--paper), #000 25%); color:var(--text); border-radius:18px; overflow:hidden; box-shadow: 0 30px 60px rgba(0,0,0,.5); border:1px solid var(--ring); }
+    .bb-modalHead{ display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:color-mix(in srgb, var(--paper), #000 10%) }
+    .bb-close{ border:none; background:color-mix(in srgb, var(--paper), #000 10%); border:1px solid var(--ring); color:var(--text); border-radius:999px; padding:6px 10px; cursor:pointer }
+    .bb-modalBody{ padding:14px; } .bb-modalBody img{ width:100%; height:auto; display:block; border-radius:12px }
+    .sr{ position:absolute; width:1px; height:1px; clip:rect(0 0 0 0); overflow:hidden; white-space:nowrap }
+  </style>
+  <header class="bb-header">
+    <div class="bb-avatar"><img src="https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?q=80&amp;w=600" alt="Foto de perfil"></div>
+    <h1 class="bb-name">Tu Barbería</h1>
+    <p class="bb-handle">@tubarberia</p>
+    <p class="bb-bio">Cortes premium • Afeitado clásico • Diseño de barba. Atención con cita previa y servicio express.</p>
+  </header>
+  <nav class="bb-actions" aria-label="Acciones rápidas">
+    <a class="bb-btn" href="https://wa.me/573228269333?text=Hola%2C%20me%20interesa%20Tu%20Barber%C3%ADa" target="_blank" rel="noopener" aria-label="WhatsApp">💬 WhatsApp</a>
+    <a class="bb-btn light" href="tel:%2B57%20322%20826%209333" aria-label="Llamar">📞 Llamar</a>
+    <a class="bb-btn light" href="#" id="mapBtn" aria-label="Cómo llegar">📍 Cómo llegar</a>
+  </nav>
+  <section class="bb-scroller" aria-label="Galería"><div class="bb-track" id="bbTrack">
+<a class="bb-slide" href="#" data-zoom aria-label="Foto 1"><img loading="lazy" src="https://storage.googleapis.com/msgsndr/I3SkVGaDdZ5p6dskFlma/media/68a402be2b4600e756e7d215.png" alt="Galería 1"></a><a class="bb-slide" href="#" data-zoom aria-label="Foto 2"><img loading="lazy" src="https://storage.googleapis.com/msgsndr/I3SkVGaDdZ5p6dskFlma/media/68a402be2b460069e3e7d214.png" alt="Galería 2"></a><a class="bb-slide" href="#" data-zoom aria-label="Foto 3"><img loading="lazy" src="https://storage.googleapis.com/msgsndr/I3SkVGaDdZ5p6dskFlma/media/68a402bdfcbcd6ef2f3a7d3a.png" alt="Galería 3"></a>
+</div></section>
+  <section class="bb-links" aria-label="Enlaces útiles">
+<a class="bb-tile" href="#" target="_blank" rel="noopener"><div class="bb-icon">💈</div><div><p class="bb-title">Servicios &amp; Precios</p><p class="bb-sub">Cortes, afeitado, color, faciales</p></div><div class="bb-arrow">➜</div></a><a class="bb-tile" href="https://instagram.com/tuusuario" target="_blank" rel="noopener"><div class="bb-icon">📸</div><div><p class="bb-title">Instagram</p><p class="bb-sub">Trabajos recientes</p></div><div class="bb-arrow">➜</div></a>
+</section>
+  <div class="bb-dock" id="bbDock"><div class="bb-dockInner"><a id="dockWA" class="bb-fab" href="https://wa.me/573228269333?text=Hola%2C%20me%20interesa%20Tu%20Barber%C3%ADa" rel="noopener" role="button">💬 WhatsApp</a><a id="dockShare" class="bb-fab secondary" href="#" rel="noopener" role="button">🔗 Compartir</a></div></div>
+  <div class="bb-modal" id="zoomModal" aria-hidden="true" role="dialog" aria-label="Vista ampliada"><div class="bb-modalCard"><div class="bb-modalHead"><strong>Vista</strong><button class="bb-close" data-close>✕</button></div><div class="bb-modalBody"><img id="zoomImg" src="" alt="Imagen ampliada"></div></div></div>
+  <script>
+    (function(){const el=document.getElementById("bbTrack");let isDown=false,startX=0,scrollLeft=0;
+      el&&el.addEventListener("mousedown",e=>{isDown=true;startX=e.pageX-el.offsetLeft;scrollLeft=el.scrollLeft;});
+      el&&el.addEventListener("mouseleave",()=>isDown=false); el&&el.addEventListener("mouseup",()=>isDown=false);
+      el&&el.addEventListener("mousemove",e=>{if(!isDown)return;e.preventDefault();const x=e.pageX-el.offsetLeft;el.scrollLeft=scrollLeft-(x-startX)*1.2;});
+      let ts=0,ss=0; el&&el.addEventListener("touchstart",e=>{ts=e.touches[0].pageX;ss=el.scrollLeft;},{passive:true});
+      el&&el.addEventListener("touchmove",e=>{const x=e.touches[0].pageX;el.scrollLeft=ss-(x-ts)*1.2;},{passive:true});})();
+    (function(){const modal=document.getElementById("zoomModal");const img=document.getElementById("zoomImg");
+      document.querySelectorAll("[data-zoom]").forEach(card=>{card.addEventListener("click",e=>{e.preventDefault();const src=card.querySelector("img")?.src;if(src){img.src=src;modal.classList.add("show");modal.setAttribute("aria-hidden","false");}});});
+      modal&&modal.addEventListener("click",e=>{if(e.target===modal||e.target.hasAttribute("data-close")){modal.classList.remove("show");modal.setAttribute("aria-hidden","true");img.src="";}});})();
+    (function(){const btn=document.getElementById("mapBtn");const ADDRESS="";
+      function isIOS(){return /iPad|iPhone|iPod/.test(navigator.userAgent);}
+      function openMaps(){const q=encodeURIComponent(ADDRESS||"");let url=`https://www.google.com/maps/search/?api=1&query=${q}`; if(isIOS()) url=`http://maps.apple.com/?q=${q}`; window.open(url,"_blank","noopener");}
+      btn&&btn.addEventListener("click",e=>{e.preventDefault();openMaps();});})();
+    (function(){const dock=document.getElementById("bbDock");const wa=document.getElementById("dockWA");const sh=document.getElementById("dockShare");
+      if(dock){dock.style.zIndex="2147483647";dock.style.pointerEvents="auto";dock.querySelectorAll("*").forEach(el=>el.style.pointerEvents="auto");}
+      function openWA(e,href){if(e){e.preventDefault();e.stopPropagation();}const win=window.open(href,"_blank","noopener,noreferrer");if(!win){const api=href.replace("https://wa.me/","https://api.whatsapp.com/send?phone=").replace("?text=","&text=");window.location.href=api;}}
+      function doShare(e){if(e){e.preventDefault();e.stopPropagation();}const data={title:document.title||"Micrositio",text:"Comparto este enlace",url:location.href}; if(navigator.share) navigator.share(data).catch(()=>{}); else if(navigator.clipboard?.writeText) navigator.clipboard.writeText(location.href).then(()=>alert("Enlace copiado.")).catch(()=>prompt("Copia este enlace:",location.href)); else prompt("Copia este enlace:",location.href);}
+      if(wa){const href=wa.getAttribute("href");["click","touchend"].forEach(evt=>wa.addEventListener(evt,ev=>openWA(ev,href),{passive:false}));}
+      if(sh){["click","touchend"].forEach(evt=>sh.addEventListener(evt,doShare,{passive:false}));}
+      document.addEventListener("click",ev=>{const t=ev.target.closest("#dockWA,#dockShare"); if(!t) return; ev.preventDefault(); ev.stopPropagation(); if(t.id==="dockWA") openWA(ev,t.getAttribute("href")); if(t.id==="dockShare") doShare(ev);}, true);})();
+  </script>
+</section>
+<!-- ============ /MICROSITIO ============ -->
